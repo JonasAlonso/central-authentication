@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping
 public class RegistrationController {
 
+    public static final String REGISTRATION_ENDPOINT = "/register";
     private UserRepository repo;
 
     private PasswordEncoder encoder;
