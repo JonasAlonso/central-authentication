@@ -1,0 +1,9 @@
+services:
+  postgres:
+    image: 'postgres:17.5'
+    environment:
+      - 'POSTGRES_DB=centralauthdb'
+      - 'POSTGRES_PASSWORD=pieis18235312+'
+      - 'POSTGRES_USER=centraldb'
+    ports:
+      - '5432'
