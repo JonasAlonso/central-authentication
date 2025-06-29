@@ -1,7 +1,7 @@
 package com.baerchen.central.authentication.oauth.boundary;
 
+import com.baerchen.central.authentication.oauth.control.RolesClaimConverter;
 import com.baerchen.central.authentication.userregister.boundary.RegistrationController;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcOperations;
@@ -10,16 +10,11 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
-import org.springframework.security.oauth2.core.oidc.OidcScopes;
-import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
 import javax.sql.DataSource;
-import java.util.UUID;
 
 /**
  * This config sets up:
@@ -39,10 +34,20 @@ public class AuthServerConfig {
         http
                 .authorizeHttpRequests( authorize -> authorize
                         .requestMatchers(RegistrationController.REGISTRATION_ENDPOINT).permitAll()
+                        /**
+                         * alternative:
+                         *  Method security (class or method level)
+                         * @PreAuthorize("hasRole('ADMIN')")
+                         * public void adminOnlyAction() { ... }
+                         * */
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(Customizer.withDefaults())
-                .oauth2ResourceServer(resourceServer -> resourceServer.jwt(Customizer.withDefaults())
+                //.oauth2ResourceServer(resourceServer -> resourceServer.jwt(Customizer.withDefaults())
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt( jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()
+                ))
+
                 )
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/oauth2/token", RegistrationController.REGISTRATION_ENDPOINT));
 
@@ -79,6 +84,13 @@ public class AuthServerConfig {
     public JdbcRegisteredClientRepository registeredClientRepository(DataSource dataSource) {
         JdbcOperations jdbcOperations = new JdbcTemplate(dataSource);
         return new JdbcRegisteredClientRepository(jdbcOperations);
+    }
+
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+        converter.setJwtGrantedAuthoritiesConverter(new RolesClaimConverter());
+        return converter;
     }
 
 }

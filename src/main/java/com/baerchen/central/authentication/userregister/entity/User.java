@@ -5,7 +5,9 @@ import lombok.Data;
 import lombok.Generated;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -17,12 +19,20 @@ public class User {
     @Generated
     private UUID id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String username;
+
+    @Column(nullable = false)
     private String password; // hashed
+
+    @Column(nullable = false)
     private String email;
+
     private String info; // general information about the user
-    private String role = "USER"; // expand
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "role")
+    private Set<String> roles = new HashSet<>();
 
     @CollectionTable(name = "user_backends", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "backend_id")
