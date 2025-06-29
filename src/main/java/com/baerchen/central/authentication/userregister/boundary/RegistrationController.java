@@ -1,7 +1,7 @@
-package com.baerchen.central.authentication.register.boundary;
+package com.baerchen.central.authentication.userregister.boundary;
 
-import com.baerchen.central.authentication.runtime.control.UserRepository;
-import com.baerchen.central.authentication.runtime.entity.User;
+import com.baerchen.central.authentication.userregister.control.UserRepository;
+import com.baerchen.central.authentication.userregister.entity.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;

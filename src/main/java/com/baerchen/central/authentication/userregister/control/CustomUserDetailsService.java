@@ -1,6 +1,7 @@
-package com.baerchen.central.authentication.runtime.control;
+package com.baerchen.central.authentication.userregister.control;
 
-import com.baerchen.central.authentication.runtime.entity.User;
+import com.baerchen.central.authentication.userregister.control.UserRepository;
+import com.baerchen.central.authentication.userregister.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -1,9 +1,8 @@
-package com.baerchen.central.authentication.register.control;
+package com.baerchen.central.authentication.userregister.control;
 
-import com.baerchen.central.authentication.register.boundary.RegisterRequest;
-import com.baerchen.central.authentication.register.boundary.RegisterResult;
-import com.baerchen.central.authentication.runtime.control.UserRepository;
-import com.baerchen.central.authentication.runtime.entity.User;
+import com.baerchen.central.authentication.userregister.boundary.RegisterRequest;
+import com.baerchen.central.authentication.userregister.boundary.RegisterResult;
+import com.baerchen.central.authentication.userregister.entity.User;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;

@@ -5,4 +5,16 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
 
+
+    <changeSet id="create-oauth2-registered-client-table" author="baerchen">
+        <sqlFile path="db/sql/oauth2_registered_client.sql"/>
+    </changeSet>
+
+    <changeSet id="create-oauth2-authorization-table" author="baerchen">
+        <sqlFile path="db/sql/oauth2_authorization.sql"/>
+    </changeSet>
+
+    <changeSet id="create-oauth2-authorization-consent-table" author="baerchen">
+        <sqlFile path="db/sql/oauth2_authorization-consent.sql"/>
+    </changeSet>
 </databaseChangeLog>

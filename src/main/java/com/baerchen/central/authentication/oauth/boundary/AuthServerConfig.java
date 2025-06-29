@@ -1,9 +1,11 @@
 package com.baerchen.central.authentication.oauth.boundary;
 
-import com.baerchen.central.authentication.register.boundary.RegistrationController;
+import com.baerchen.central.authentication.userregister.boundary.RegistrationController;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -11,10 +13,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.web.SecurityFilterChain;
 
+import javax.sql.DataSource;
 import java.util.UUID;
 
 /**
@@ -46,6 +50,8 @@ public class AuthServerConfig {
 
     }
 
+    /**
+     *  needed only to try a hardcoded client as example
     @Bean
     @Qualifier("app01-client-auth")
     public RegisteredClientRepository registeredClientRepository(PasswordEncoder passwordEncoder){
@@ -62,10 +68,17 @@ public class AuthServerConfig {
 
         return new InMemoryRegisteredClientRepository(registeredClient);
     }
+     */
 
     @Bean
     public PasswordEncoder passwordEncoder(){
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+    @Bean
+    public JdbcRegisteredClientRepository registeredClientRepository(DataSource dataSource) {
+        JdbcOperations jdbcOperations = new JdbcTemplate(dataSource);
+        return new JdbcRegisteredClientRepository(jdbcOperations);
     }
 
 }

@@ -1,8 +1,8 @@
-package com.baerchen.central.authentication.runtime.control;
+package com.baerchen.central.authentication.userregister.control;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import com.baerchen.central.authentication.runtime.entity.User;
+import com.baerchen.central.authentication.userregister.entity.User;
 
 
 import java.util.Optional;

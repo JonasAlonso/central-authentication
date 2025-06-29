@@ -1,6 +1,6 @@
-package com.baerchen.central.authentication.register.boundary;
+package com.baerchen.central.authentication.userregister.boundary;
 
-import com.baerchen.central.authentication.register.control.RegisterUserControl;
+import com.baerchen.central.authentication.userregister.control.RegisterUserControl;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
