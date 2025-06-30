@@ -2,7 +2,6 @@ package com.baerchen.central.authentication.userregister.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Generated;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -16,7 +15,7 @@ import java.util.UUID;
 public class User {
 
     @Id
-    @Generated
+    @GeneratedValue
     private UUID id;
 
     @Column(unique = true, nullable = false)
@@ -28,12 +27,14 @@ public class User {
     @Column(nullable = false)
     private String email;
 
-    private String info; // general information about the user
+    private String info; 
+    
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "role")
     private Set<String> roles = new HashSet<>();
 
+    @ElementCollection
     @CollectionTable(name = "user_backends", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "backend_id")
     private List<String> backend;
