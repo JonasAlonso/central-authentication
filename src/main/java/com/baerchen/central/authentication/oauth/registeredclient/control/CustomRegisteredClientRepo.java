@@ -2,7 +2,6 @@ package com.baerchen.central.authentication.oauth.registeredclient.control;
 
 import com.baerchen.central.authentication.oauth.registeredclient.boundary.RegisteredClientDTO;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -13,8 +12,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class CustomRegisteredClientRepo {
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     public void deleteClientById(String id) {
         this.jdbcTemplate.update("DELETE FROM oauth2_registered_client WHERE id = ?", id);
