@@ -1,30 +1,28 @@
 package com.baerchen.central.authentication.userregister.boundary;
 
-import com.baerchen.central.authentication.userregister.control.UserRepository;
-import com.baerchen.central.authentication.userregister.entity.User;
+import com.baerchen.central.authentication.userregister.control.CustomUserDetailsService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping
+@RequestMapping("/users")
+@AllArgsConstructor
 public class RegistrationController {
 
-    public static final String REGISTRATION_ENDPOINT = "/register";
-    private UserRepository repo;
+    private final CustomUserDetailsService service;
 
-    private PasswordEncoder encoder;
+    public static final String REGISTRATION_ENDPOINT = "/register";
 
     @PostMapping
-    public ResponseEntity<String> register(@RequestBody User user){
-        user.setPassword(encoder.encode(user.getPassword()));
-        repo.save(user);
-        return ResponseEntity.ok("User registered");
-
+    public  ResponseEntity<?> register(@RequestBody RegisterRequest request){
+        RegisterResult result = service.register(request);
+        return ResponseEntity.status(result.success()  ? 201 : 400).body(result.message());
     }
+
 
 
 }
