@@ -40,6 +40,8 @@ public class AuthServerConfig {
                          * @PreAuthorize("hasRole('ADMIN')")
                          * public void adminOnlyAction() { ... }
                          * */
+                        // executed this once in order to create a client
+                      //  .requestMatchers("/admin/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
@@ -49,7 +51,8 @@ public class AuthServerConfig {
                 ))
 
                 )
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/oauth2/token", RegistrationController.REGISTRATION_ENDPOINT));
+              //  .csrf(csrf -> csrf.ignoringRequestMatchers("/oauth2/token", RegistrationController.REGISTRATION_ENDPOINT));
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/oauth2/token", RegistrationController.REGISTRATION_ENDPOINT,"/admin/**"));
 
         return http.build();
 
