@@ -1,0 +1,13 @@
+{
+  "clientId": "my-test-app-2",
+  "clientSecret": "super-secret-2",
+  "redirectUris": [
+    "http://localhost:8081/login/oauth2/code/my-test-app"
+  ],
+  "scopes": [
+    "openid", "read", "write"
+  ],
+  "grantTypes": [
+    "authorization_code", "refresh_token"
+  ]
+}

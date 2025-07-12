@@ -4,15 +4,19 @@ import com.baerchen.central.authentication.oauth.control.RolesClaimConverter;
 import com.baerchen.central.authentication.userregister.boundary.RegistrationController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.server.SecurityWebFilterChain;
+import reactor.core.publisher.Mono;
 
 import javax.sql.DataSource;
 
@@ -27,36 +31,24 @@ import javax.sql.DataSource;
  */
 
 @Configuration
+@EnableWebFluxSecurity
 public class AuthServerConfig {
-    @Bean
-    public SecurityFilterChain authServerSecurityFilterChain(HttpSecurity http) throws Exception{
-        // Configures endpoints like /oauth2/authorize, /oauth2/token, /.well-known/openid-configuration, etc.
-        http
-                .authorizeHttpRequests( authorize -> authorize
-                        .requestMatchers(RegistrationController.REGISTRATION_ENDPOINT).permitAll()
-                        /**
-                         * alternative:
-                         *  Method security (class or method level)
-                         * @PreAuthorize("hasRole('ADMIN')")
-                         * public void adminOnlyAction() { ... }
-                         * */
-                        // executed this once in order to create a client
-                      //  .requestMatchers("/admin/**").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .anyRequest().authenticated()
-                )
-                .formLogin(Customizer.withDefaults())
-                //.oauth2ResourceServer(resourceServer -> resourceServer.jwt(Customizer.withDefaults())
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt( jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()
-                ))
 
-                )
-              //  .csrf(csrf -> csrf.ignoringRequestMatchers("/oauth2/token", RegistrationController.REGISTRATION_ENDPOINT));
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/oauth2/token", RegistrationController.REGISTRATION_ENDPOINT,"/admin/**"));
+        @Bean
+        public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+           return  http
+                    .authorizeExchange(exchanges -> exchanges
+                            .pathMatchers(RegistrationController.REGISTRATION_ENDPOINT).permitAll()
+                            .pathMatchers("/admin/**").hasRole("ADMIN")
+                            .anyExchange().authenticated()
+                    )
+                    // .formLogin() is NOT supported in Spring Cloud Gateway!
+                    // .formLogin(withDefaults()) // Only for reactive web *apps*, NOT gateway!
+                   .oauth2ResourceServer(ServerHttpSecurity.OAuth2ResourceServerSpec::jwt)
+                    // CSRF in WebFlux: Use matcher objects or simply disable as below
+                    .csrf(ServerHttpSecurity.CsrfSpec::disable).build();
+        }
 
-        return http.build();
-
-    }
 
     /**
      *  needed only to try a hardcoded client as example
@@ -87,13 +79,6 @@ public class AuthServerConfig {
     public JdbcRegisteredClientRepository registeredClientRepository(DataSource dataSource) {
         JdbcOperations jdbcOperations = new JdbcTemplate(dataSource);
         return new JdbcRegisteredClientRepository(jdbcOperations);
-    }
-
-    @Bean
-    public JwtAuthenticationConverter jwtAuthenticationConverter() {
-        JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
-        converter.setJwtGrantedAuthoritiesConverter(new RolesClaimConverter());
-        return converter;
     }
 
 }

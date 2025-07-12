@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: Central Authentication Service
+  profiles:
+    active: local
+  main:
+    web-application-type: reactive
+  datasource:
+    url: jdbc:postgresql://localhost:5432/centralauthdb
+    username: centraldb
+    password: pieis18235312+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  liquibase:
+    change-log: classpath:/db/central-auth-changelog-master.xml
+  redis:
+    host: localhost
+    port: 6379
+  cloud:
+    gateway:
+      routes:
+        - id: register-service
+          uri: http://localhost:${server.port:9000}
+          predicates:
+            - Path=/register
+          filters:
+            - name: RequestRateLimiter
+              args:
+                # Limit: 3 registrations per minute, burst up to 3
+                redis-rate-limiter.replenishRate: 3     # new tokens per second
+                redis-rate-limiter.burstCapacity: 3     # max tokens in bucket
+                redis-rate-limiter.requestedTokens: 1   # tokens consumed per request
+                key-resolver: "#{@ipKeyResolver}"       # group by IP (see below)
+
+
+
+server:
+  port: 9000
+
+###############################
+#         Logging             #
+###############################
+
+logging:
+  level:
+    org.springframework.boot.autoconfigure.liquibase: DEBUG
+    org.springframework.security: TRACE
