@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: Central Authentication Service
+  profiles:
+    active: local
+  datasource:
+    url: jdbc:postgresql://localhost:5432/centralauthdb
+    username: centraldb
+    password: pieis18235312+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  liquibase:
+    change-log: classpath:/db/central-auth-changelog-master.xml
+
+server:
+  port: 9090
+
+###############################
+#         Logging             #
+###############################
+
+logging:
+  level:
+    org.springframework.boot.autoconfigure.liquibase: DEBUG
+    org.springframework.security: TRACE
