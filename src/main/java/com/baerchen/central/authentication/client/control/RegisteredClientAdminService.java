@@ -26,7 +26,6 @@ public class RegisteredClientAdminService {
 
     public RegisteredClientDTO create(RegisteredClientDTO dto){
         RegisteredClient rc = this.mapper.toEntity(dto,this.encoder);
-        this.mapper.fillMissingDefaults(rc);
         /*
         RegisteredClient rc = RegisteredClient.withId(UUID.randomUUID().toString())
                 .clientId(dto.clientId())
