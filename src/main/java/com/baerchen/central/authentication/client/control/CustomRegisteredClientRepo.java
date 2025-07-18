@@ -6,8 +6,10 @@ import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -26,16 +28,26 @@ public class CustomRegisteredClientRepo {
 
     public List<RegisteredClientDTO> listAllClients() {
         return jdbcTemplate.query(
-                "SELECT id, client_id, client_secret FROM oauth2_registered_client",
+                "SELECT id, client_id, client_secret, redirect_uris, scopes, client_authentication_methods, authorization_grant_types FROM oauth2_registered_client",
                 (rs, rowNum) -> new RegisteredClientDTO(
                         rs.getString("id"),
                         rs.getString("client_id"),
                         rs.getString("client_secret"),
-                        Set.of(rs.getString("redirect_uris")),
-                        Set.of(rs.getString("scopes")),
-                        Set.of(rs.getString("client_authentication_methods")),
-                        Set.of(rs.getString("authorization_grant_types"))
+                        parseSet(rs.getString("redirect_uris")),
+                        parseSet(rs.getString("scopes")),
+                        parseSet(rs.getString("client_authentication_methods")),
+                        parseSet(rs.getString("authorization_grant_types"))
         ));
+    }
+
+    private Set<String> parseSet(String input) {
+        if (input == null || input.isBlank()) {
+            return Set.of();
+        }
+        return Arrays.stream(input.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.toSet());
     }
 
 
