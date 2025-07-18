@@ -1,4 +1,4 @@
-package com.baerchen.central.authentication.oauth.registeredclient.boundary;
+package com.baerchen.central.authentication.client.boundary;
 
 import java.util.Set;
 
@@ -8,5 +8,6 @@ public record RegisteredClientDTO(
         String clientSecret,
         Set<String> redirectUris,
         Set<String> scopes,
+        Set<String> authenticationMethods,
         Set<String> grantTypes
 ) {}

@@ -1,8 +1,10 @@
-package com.baerchen.central.authentication.oauth.registeredclient.boundary;
+package com.baerchen.central.authentication.client.boundary;
 
-import com.baerchen.central.authentication.oauth.registeredclient.control.RegisteredClientAdminService;
+import com.baerchen.central.authentication.client.control.RegisteredClientAdminService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 
 @RestController
@@ -28,13 +30,21 @@ public class RegisteredClientAdminController {
 
     @GetMapping("/{clientId}")
     public ResponseEntity<RegisteredClientDTO> get(@PathVariable String clientId) {
-        var client = this.service.get(clientId);
-        return (client != null) ? ResponseEntity.ok(client) : ResponseEntity.notFound().build();
+        return service.get(clientId)
+                .map(ResponseEntity::ok)
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Client not found: [%s]",clientId))
+                );
     }
     @DeleteMapping("/{clientId}")
     public ResponseEntity<?> delete(@PathVariable String clientId) {
         this.service.deleteByClientId(clientId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping
+    public ResponseEntity<RegisteredClientDTO> update(@RequestBody RegisteredClientDTO dto){
+        return ResponseEntity.ok(this.service.update(dto));
     }
 
 }

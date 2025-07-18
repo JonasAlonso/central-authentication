@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Register OAuth2 Client</title>
+    <style>
+    body {
+      font-family: sans-serif;
+      max-width: 700px;
+      margin: 2rem auto;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 0.4rem;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 0.6rem 1rem;
+    }
+    pre {
+      background: #f0f0f0;
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+<h2>Register OAuth2 Client</h2>
+<form id="client-form">
+    <label>Client ID: <input type="text" id="clientId" required></label>
+    <label>Client Secret: <input type="text" id="clientSecret" required></label>
+    <label>Redirect URIs (comma): <textarea id="redirectUris" required></textarea></label>
+    <label>Scopes (comma): <input type="text" id="scopes" value="openid,profile,admin"></label>
+    <label>Grant Types (comma): <input type="text" id="grantTypes" value="authorization_code,refresh_token"></label>
+    <button type="submit">Register Client</button>
+</form>
+
+<pre id="output">Initializing...</pre>
+
+<script>
+    const authServer = "http://localhost:9090";
+    const clientId = "admin-ui";
+    const redirectUri = location.origin + location.pathname;
+    const output = document.getElementById("output");
+
+    (async function init() {
+      const params = new URLSearchParams(location.search);
+      const code = params.get("code");
+      const state = params.get("state");
+
+      if (!sessionStorage.getItem("access_token")) {
+        if (!code) {
+          const {verifier, challenge} = await generatePkcePair();
+          sessionStorage.setItem("pkce_verifier", verifier);
+          const state = crypto.randomUUID();
+          sessionStorage.setItem("pkce_state", state);
+
+          const authUrl = `${authServer}/oauth2/authorize?response_type=code&client_id=${clientId}`
+            + `&redirect_uri=${encodeURIComponent(redirectUri)}`
+            + `&scope=openid%20profile%20admin`
+            + `&state=${state}`
+            + `&code_challenge=${challenge}`
+            + `&code_challenge_method=S256`;
+
+          window.location = authUrl;
+          return;
+        }
+
+        // We have ?code=..., exchange it for a token
+        if (state !== sessionStorage.getItem("pkce_state")) {
+          output.textContent = "❌ State mismatch!";
+          return;
+        }
+
+        const codeVerifier = sessionStorage.getItem("pkce_verifier");
+        const tokenRes = await fetch(`${authServer}/oauth2/token`, {
+          method: "POST",
+          headers: {"Content-Type": "application/x-www-form-urlencoded"},
+          body: new URLSearchParams({
+            grant_type: "authorization_code",
+            code: code,
+            client_id: clientId,
+            redirect_uri: redirectUri,
+            code_verifier: codeVerifier
+          })
+        });
+
+        const json = await tokenRes.json();
+        const token = json.access_token;
+        if (!token) {
+          output.textContent = "❌ Failed to obtain token:\n" + JSON.stringify(json, null, 2);
+          return;
+        }
+
+        sessionStorage.setItem("access_token", token);
+        window.history.replaceState({}, "", redirectUri); // clean up URL
+        output.textContent = "✅ Logged in. Ready.";
+      } else {
+        output.textContent = "✅ Access token already present. Ready.";
+      }
+    })();
+
+    document.getElementById("client-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const token = sessionStorage.getItem("access_token");
+      if (!token) {
+        output.textContent = "❌ No access token. Reload to login.";
+        return;
+      }
+
+      const dto = {
+        clientId: document.getElementById("clientId").value.trim(),
+        clientSecret: document.getElementById("clientSecret").value.trim(),
+        redirectUris: new Set(document.getElementById("redirectUris").value.split(',').map(s => s.trim())),
+        scopes: new Set(document.getElementById("scopes").value.split(',').map(s => s.trim())),
+        grantTypes: new Set(document.getElementById("grantTypes").value.split(',').map(s => s.trim()))
+      };
+
+      try {
+        const res = await fetch("/admin/clients", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+          },
+          body: JSON.stringify(dto, (k, v) => v instanceof Set ? [...v] : v)
+        });
+
+        const json = await res.json();
+        output.textContent = JSON.stringify(json, null, 2);
+      } catch (err) {
+        output.textContent = "❌ Error submitting:\n" + err.message;
+      }
+    });
+
+    // PKCE generator
+    async function generatePkcePair() {
+      const array = new Uint8Array(64);
+      crypto.getRandomValues(array);
+      const verifier = btoa(String.fromCharCode(...array)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+      const encoder = new TextEncoder();
+      const data = encoder.encode(verifier);
+      const digest = await crypto.subtle.digest("SHA-256", data);
+      const challenge = btoa(String.fromCharCode(...new Uint8Array(digest))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+      return {verifier, challenge};
+    }
+  </script>
+</body>
+</html>

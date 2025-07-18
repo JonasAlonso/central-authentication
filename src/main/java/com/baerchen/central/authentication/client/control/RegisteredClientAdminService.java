@@ -1,55 +1,64 @@
-package com.baerchen.central.authentication.oauth.registeredclient.control;
+package com.baerchen.central.authentication.client.control;
 
-import com.baerchen.central.authentication.oauth.registeredclient.boundary.RegisteredClientDTO;
+import com.baerchen.central.authentication.client.boundary.RegisteredClientDTO;
+import com.baerchen.central.authentication.client.boundary.RegisteredClientMapper;
+
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
+
 import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
+import java.util.Optional;
 
 @Service
+@Slf4j
 @AllArgsConstructor
 public class RegisteredClientAdminService {
 
     private final JdbcRegisteredClientRepository repo;
     private final PasswordEncoder encoder;
     private final CustomRegisteredClientRepo customRegisteredClientRepo;
+    private final RegisteredClientMapper mapper;
 
     public RegisteredClientDTO create(RegisteredClientDTO dto){
+        RegisteredClient rc = this.mapper.toEntity(dto,this.encoder);
+        this.mapper.fillMissingDefaults(rc);
+        /*
         RegisteredClient rc = RegisteredClient.withId(UUID.randomUUID().toString())
                 .clientId(dto.clientId())
                 .clientSecret(this.encoder.encode(dto.clientSecret()))
                 .redirectUris(uris -> uris.addAll(dto.redirectUris()))
                 .scopes(scopes -> scopes.addAll(dto.scopes()))
                 .authorizationGrantTypes(grants -> dto.grantTypes().forEach(g -> grants.add(new AuthorizationGrantType(g))))
-                .build();
+                .build();*/
         repo.save(rc);
         return dto;
     }
 
-    public RegisteredClientDTO get(String clientId) {
-        RegisteredClient rc = repo.findByClientId(clientId);
-        if (rc == null) return null;
-        return toDTO(rc);
+    public Optional<RegisteredClientDTO> get(String clientId) {
+        RegisteredClient rc = this.repo.findByClientId(clientId);
+        if (rc == null) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(this.mapper.toDto(rc));
     }
 
-    private RegisteredClientDTO toDTO(RegisteredClient rc) {
-        return new RegisteredClientDTO(
-                rc.getId(),
-                rc.getClientId(),
-                rc.getClientSecret(),
-                rc.getRedirectUris(),
-                rc.getScopes(),
-                rc.getAuthorizationGrantTypes().stream().map(AuthorizationGrantType::getValue).collect(java.util.stream.Collectors.toSet())
-        );
+    public RegisteredClientDTO update(RegisteredClientDTO dto){
+        get(dto.clientId()).orElseThrow();
+        log.info("Client [{}] found proceeding to the update.", dto.clientId());
+        this.repo.save(this.mapper.toEntity(dto, this.encoder));
+        return dto;
     }
+
+
+
     public void deleteByClientId(String clientId) {
-        customRegisteredClientRepo.deleteClientByClientId(clientId);
+        this.customRegisteredClientRepo.deleteClientByClientId(clientId);
     }
-
 
 
 
