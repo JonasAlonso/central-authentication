@@ -24,13 +24,16 @@ A Spring Boot 3.5.3 application using Spring Authorization Server 1.5.1 to act a
 - [x] OAuth2 default tables via Liquibase (`oauth2_registered_client`, etc.)
 - [x] Role-based security (`@PreAuthorize`)
 - [x] Custom `JwtAuthenticationConverter` to extract authorities
-- [ ] User management (create, list, persist)
-- [ ] Secure form-based login
-- [ ] Self-service registration
+- [x] User management (create, list, persist)
+- [x] Secure form-based login (Spring Boot login page)
+- [x] Self-service registration
 - [ ] JWT issuance with custom claims
+- [x] Admin endpoints for OAuth2 client CRUD (`static/client-admin.html`)
 - [ ] Integration with protected backend endpoints
 - [ ] Token refresh flow
-- [ ] Dockerized local dev setup (optional)
+- [x] Dockerized local dev setup (compose + `application.yml`)
+- Logging via `ControllerLoggingAspect`
+- Global exception handling via `GlobalExceptionHandler`
 
 ---
 
@@ -57,21 +60,27 @@ A Spring Boot 3.5.3 application using Spring Authorization Server 1.5.1 to act a
 | JWT with custom claims        | ✅ Done |
 | Custom `JwtAuthenticationConverter` | ✅ Done |
 | Role-based endpoint security  | ✅ Done |
-| User entity + repo/service    | ⏳ To do |
-| Secure login w/ Thymeleaf     | ⏳ To do |
-| Self-service registration     | ⏳ To do |
+| User entity + repo/service    | ✅ Done |
+| Secure login w/ Thymeleaf     | ✅ Done |
+| Self-service registration     | ✅ Done |
 | Integration test: Token flow  | ⏳ To do |
-| Docker Compose setup          | ⏳ To do |
+| Docker Compose setup          | ✅ Done |
 
 ---
 
 ## 💡 Usage
 
 1. Clone the repo and update your DB credentials in `application.yml`.
-2. Run the app locally via:
+2. Start PostgreSQL via Docker Compose:
+   ```bash
+   docker compose up -d
+   ```
+3. Run the application:
    ```bash
    ./mvnw spring-boot:run
-3. Access authorization endpoints under /oauth2/authorize, /oauth2/token, etc.
+   ```
+4. Access authorization endpoints under /oauth2/authorize, /oauth2/token, etc.
+5. See [docs/CreateUserFlow.md](docs/CreateUserFlow.md) for manual auth & client flow examples.
 
 ---
 
@@ -93,10 +102,11 @@ Here’s a % breakdown:
 |--------------------------------------|----------|
 | Auth Server setup + DB + JWT config | ✅ 100%   |
 | Custom JWT converter + roles         | ✅ 100%   |
-| User entity + repo/service layer     | ⏳ 0%     |
-| Secure login with Thymeleaf UI       | ⏳ 0%     |
-| Self-service user registration       | ⏳ 0%     |
+| User entity + repo/service layer     | ✅ 100%   |
+| Secure login with Thymeleaf UI       | ✅ 100%   |
+| Self-service user registration       | ✅ 100%   |
 | Integration test: token flow         | ⏳ 10%    |
-| Total Estimated Completion           | **≈ 45%** ✅ |
+| Total Estimated Completion           | **≈ 85%** ✅ |
 
-Nearly halfway there. Up next ->  get user management + the UI + integration tests, to be in MVP territory.
+
+Nearly complete. Next step -> finalize token flow tests and polish docs.
