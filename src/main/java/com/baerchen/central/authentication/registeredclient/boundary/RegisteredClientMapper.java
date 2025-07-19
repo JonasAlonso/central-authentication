@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
+import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 
 import java.util.Set;
 import java.util.UUID;
@@ -23,6 +24,7 @@ public interface RegisteredClientMapper extends Defaults {
     @Mapping(source = "redirectUris", target = "redirectUris")
     @Mapping(expression = "java(toGrantTypeSet(client.getAuthorizationGrantTypes()))", target = "grantTypes" )
     @Mapping(expression = "java(toAuthenticationMethodSet(client.getClientAuthenticationMethods()))", target = "authenticationMethods")
+    @Mapping(target = "clientSettings", expression = "java(client.getClientSettings().getSettings())")
     RegisteredClientDTO toDto(RegisteredClient client);
 
     default RegisteredClient toEntity(RegisteredClientDTO dto, @Context PasswordEncoder encoder ) {
@@ -39,16 +41,21 @@ public interface RegisteredClientMapper extends Defaults {
                 .build();
     }
 
-    default RegisteredClient toEntityForUpdate(RegisteredClientDTO dto) {
-        return RegisteredClient.withId(dto.id())
+    default RegisteredClient toEntityForUpdate(RegisteredClientDTO dto, @Context PasswordEncoder encoder ) {
+        var builder =  RegisteredClient.withId(dto.id())
                 .clientId(dto.clientId())
+                .clientSecret(dto.clientSecret()!=null ? encoder.encode(dto.clientSecret()): null)
                 .redirectUris(uris -> uris.addAll(dto.redirectUris()))
                 .scopes(scopes -> scopes.addAll(dto.scopes()))
                 .authorizationGrantTypes(grants -> dto.grantTypes().forEach(grant ->
                         grants.add(new AuthorizationGrantType(grant))))
                 .clientAuthenticationMethods(methods -> dto.authenticationMethods().forEach(method ->
-                        methods.add(new ClientAuthenticationMethod(method))))
-                .build();
+                        methods.add(new ClientAuthenticationMethod(method))));
+        if (dto.clientSettings() != null) {
+            builder.clientSettings(ClientSettings.withSettings(dto.clientSettings()).build());
+        }
+        return builder.build();
+
     }
 
 
@@ -70,15 +77,8 @@ public interface RegisteredClientMapper extends Defaults {
                 defaultSet(dto.redirectUris(), DEFAULT_REDIRECT_URIS),
                 defaultSet(dto.scopes(), DEFAULT_SCOPES),
                 defaultSet(dto.authenticationMethods(), DEFAULT_AUTH_METHODS),
-                defaultSet(dto.grantTypes(), DEFAULT_GRANTS)
+                defaultSet(dto.grantTypes(), DEFAULT_GRANTS),
+                dto.clientSettings()
         );
     }
-
-    private Set<String> defaultSet(Set<String> input, Set<String> fallback) {
-        if (input == null || input.stream().allMatch(s -> s == null || s.isBlank())) {
-            return fallback;
-        }
-        return input.stream().map(String::trim).filter(s -> !s.isBlank()).collect(Collectors.toSet());
-    }
-
 }

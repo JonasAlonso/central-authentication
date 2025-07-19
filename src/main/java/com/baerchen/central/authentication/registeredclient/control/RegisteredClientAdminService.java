@@ -10,8 +10,6 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -48,14 +46,14 @@ public class RegisteredClientAdminService {
     public RegisteredClientDTO updateByClientId(RegisteredClientDTO dto){
         getByClientId(dto.clientId()).orElseThrow();
         log.info("Client [{}] found proceeding to the update.", dto.clientId());
-        this.customRegisteredClientRepo.updateClientByClientId(this.mapper.toEntityForUpdate(dto));
+        this.customRegisteredClientRepo.updateClientByClientId(this.mapper.toEntityForUpdate(dto, this.encoder));
         return dto;
     }
 
     public RegisteredClientDTO updateById(RegisteredClientDTO dto){
         getById(dto.id()).orElseThrow();
         log.info("Client [{}] found proceeding to the update.", dto.id());
-        this.repo.save(this.mapper.toEntityForUpdate(dto));
+        this.repo.save(this.mapper.toEntityForUpdate(dto, this.encoder));
         return dto;
     }
 
