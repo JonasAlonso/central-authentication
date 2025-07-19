@@ -25,7 +25,7 @@ public class RegisteredClientAdminController {
 
     @PostMapping
     public ResponseEntity<RegisteredClientDTO> create(@RequestBody RegisteredClientDTO dto) {
-        return ResponseEntity.ok(this.service.create(dto));
+        return ResponseEntity.ok(this.service.create(dto.cleaned()));
     }
 
     @GetMapping("/{clientId}")

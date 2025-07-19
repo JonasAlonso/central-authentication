@@ -1,5 +1,6 @@
 package com.baerchen.central.authentication.registeredclient.boundary;
 
+import com.baerchen.central.authentication.runtime.entity.Defaults;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -13,7 +14,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
-public interface RegisteredClientMapper {
+public interface RegisteredClientMapper extends Defaults {
 
     @Mapping(source = "id", target = "id")
     @Mapping(source = "clientId", target = "clientId")
@@ -25,14 +26,15 @@ public interface RegisteredClientMapper {
     RegisteredClientDTO toDto(RegisteredClient client);
 
     default RegisteredClient toEntity(RegisteredClientDTO dto, @Context PasswordEncoder encoder ) {
+        RegisteredClientDTO finalDto =  withDefaults(dto);
         return RegisteredClient.withId(UUID.randomUUID().toString())
                 .clientId(dto.clientId())
                 .clientSecret(encoder.encode(dto.clientSecret()))
-                .redirectUris(uris -> uris.addAll(dto.redirectUris()))
-                .scopes(scopes -> scopes.addAll(dto.scopes()))
-                .authorizationGrantTypes(grants -> dto.grantTypes().forEach(grant ->
+                .redirectUris(uris -> uris.addAll(finalDto.redirectUris()))
+                .scopes(scopes -> scopes.addAll(finalDto.scopes()))
+                .authorizationGrantTypes(grants -> finalDto.grantTypes().forEach(grant ->
                         grants.add(new AuthorizationGrantType(grant))))
-                .clientAuthenticationMethods(methods -> dto.authenticationMethods().forEach(method ->
+                .clientAuthenticationMethods(methods -> finalDto.authenticationMethods().forEach(method ->
                         methods.add(new ClientAuthenticationMethod(method))))
                 .build();
     }
@@ -60,5 +62,23 @@ public interface RegisteredClientMapper {
 
     default Set<String> toGrantTypeSet(Set<AuthorizationGrantType> input) {return input == null ? Set.of() : input.stream().map(AuthorizationGrantType::getValue).collect(Collectors.toSet());};
 
+    default RegisteredClientDTO withDefaults(RegisteredClientDTO dto) {
+        return new RegisteredClientDTO(
+                dto.id(),
+                dto.clientId(),
+                dto.clientSecret(),
+                defaultSet(dto.redirectUris(), DEFAULT_REDIRECT_URIS),
+                defaultSet(dto.scopes(), DEFAULT_SCOPES),
+                defaultSet(dto.authenticationMethods(), DEFAULT_AUTH_METHODS),
+                defaultSet(dto.grantTypes(), DEFAULT_GRANTS)
+        );
+    }
+
+    private Set<String> defaultSet(Set<String> input, Set<String> fallback) {
+        if (input == null || input.stream().allMatch(s -> s == null || s.isBlank())) {
+            return fallback;
+        }
+        return input.stream().map(String::trim).filter(s -> !s.isBlank()).collect(Collectors.toSet());
+    }
 
 }

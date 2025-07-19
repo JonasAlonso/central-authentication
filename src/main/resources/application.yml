@@ -22,6 +22,8 @@ server:
 ###############################
 
 logging:
+  file:
+    path: classpath:/logs/
   level:
     org.springframework.boot.autoconfigure.liquibase: DEBUG
     org.springframework.security: TRACE
