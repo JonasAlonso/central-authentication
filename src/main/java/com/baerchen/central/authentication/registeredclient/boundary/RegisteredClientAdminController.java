@@ -50,9 +50,10 @@ public class RegisteredClientAdminController {
         return ResponseEntity.ok(this.service.updateByClientId(dto));
     }
 
+    @PutMapping("/id")
     public ResponseEntity<RegisteredClientDTO> updateById(@RequestBody RegisteredClientDTO dto){
-        String client = this.service.getById(dto.clientId()).map(RegisteredClientDTO::id).stream().findFirst().orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Client not found: [%s]", dto.clientId()))
+        this.service.getById(dto.id()).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Client not found: [%s]", dto.id()))
         );
         return ResponseEntity.ok(this.service.updateById(dto));
     }
