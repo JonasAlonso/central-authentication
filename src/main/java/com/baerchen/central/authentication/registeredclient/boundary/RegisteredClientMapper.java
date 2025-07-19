@@ -1,13 +1,13 @@
 package com.baerchen.central.authentication.registeredclient.boundary;
 
-import org.mapstruct.*;
+import org.mapstruct.Context;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
-import org.springframework.stereotype.Component;
 
-import java.time.Instant;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -49,8 +49,16 @@ public interface RegisteredClientMapper {
                 .build();
     }
 
+
+    /**
+     * those could be this one
+     *     default <T> Set<String> toSet(Set<T> input, Function<T, String> stringMapper) {
+     *         return input == null ? Set.of() : input.stream().map(stringMapper).collect(Collectors.toSet());
+     *     }*
+     */
     default Set<String> toAuthenticationMethodSet(Set<ClientAuthenticationMethod> input) {return input == null ? Set.of() : input.stream().map(ClientAuthenticationMethod::getValue).collect(Collectors.toSet());};
 
     default Set<String> toGrantTypeSet(Set<AuthorizationGrantType> input) {return input == null ? Set.of() : input.stream().map(AuthorizationGrantType::getValue).collect(Collectors.toSet());};
+
 
 }

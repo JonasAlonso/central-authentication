@@ -2,12 +2,9 @@ package com.baerchen.central.authentication.registeredclient.control;
 
 import com.baerchen.central.authentication.registeredclient.boundary.RegisteredClientDTO;
 import com.baerchen.central.authentication.registeredclient.boundary.RegisteredClientMapper;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.stereotype.Service;

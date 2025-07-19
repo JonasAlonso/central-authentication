@@ -1,12 +1,10 @@
 package com.baerchen.central.authentication.registeredclient.control;
 
 import com.baerchen.central.authentication.registeredclient.boundary.RegisteredClientDTO;
-import com.baerchen.central.authentication.registeredclient.boundary.RegisteredClientMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;

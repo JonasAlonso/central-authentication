@@ -1,10 +1,8 @@
 package com.baerchen.central.authentication.registeredclient.control;
 
 import com.baerchen.central.authentication.registeredclient.boundary.RegisteredClientDTO;
-import com.baerchen.central.authentication.registeredclient.boundary.RegisteredClientMapper;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
-import org.apache.logging.log4j.util.Supplier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
@@ -76,19 +74,6 @@ public class CustomRegisteredClientRepo {
     }
 
 
-    private String parseAuthenticationMethod(Set<ClientAuthenticationMethod> input){
-        if (input==null || input.isEmpty()){
-            return Strings.EMPTY;
-        }
-        return input.stream().map(ClientAuthenticationMethod::getValue).collect(Collectors.joining(","));
-    }
-
-    private String parseGrantType(Set<AuthorizationGrantType> input){
-        if (input==null || input.isEmpty()){
-            return Strings.EMPTY;
-        }
-        return input.stream().map(AuthorizationGrantType::getValue).collect(Collectors.joining(","));
-    }
     /**
      *     private Set<String> redirectUris;
      *     private Set<String> postLogoutRedirectUris;
