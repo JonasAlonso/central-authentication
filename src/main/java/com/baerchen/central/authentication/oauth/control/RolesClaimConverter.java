@@ -14,7 +14,7 @@ public class RolesClaimConverter implements Converter<Jwt, Collection<GrantedAut
     @Override
     public Collection<GrantedAuthority> convert(Jwt source) {
         List<String> roles = source.getClaimAsStringList("roles");
-        if (roles == null) {
+        if (roles == null || roles.isEmpty()) {
             return List.of();
         }
         return roles.stream()

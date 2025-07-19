@@ -4,6 +4,7 @@ import com.baerchen.central.authentication.registeredclient.boundary.RegisteredC
 import com.baerchen.central.authentication.runtime.control.Parser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
@@ -49,7 +50,7 @@ public class CustomRegisteredClientRepo implements Parser {
 
     public List<RegisteredClientDTO> listAllClients() {
         return jdbcTemplate.query(
-                "SELECT id, client_id, client_secret, redirect_uris, scopes, client_authentication_methods, authorization_grant_types FROM oauth2_registered_client",
+                "SELECT id, client_id, client_secret, redirect_uris, scopes, client_authentication_methods, authorization_grant_types, client_settings FROM oauth2_registered_client",
                 (rs, rowNum) -> new RegisteredClientDTO(
                         rs.getString("id"),
                         rs.getString("client_id"),
@@ -58,7 +59,7 @@ public class CustomRegisteredClientRepo implements Parser {
                         parseSet(rs.getString("scopes")),
                         parseSet(rs.getString("client_authentication_methods")),
                         parseSet(rs.getString("authorization_grant_types")),
-                        Map.of() //TO-DO implement parseMap
+                        parseMap(rs.getString("client_settings"))
         ));
     }
 
@@ -67,6 +68,17 @@ public class CustomRegisteredClientRepo implements Parser {
             return objectMapper.writeValueAsString(attribute);
         } catch (JsonProcessingException e) {
             throw new IllegalArgumentException("Could not serialize clientSettings", e);
+        }
+    }
+
+    private Map<String, Object> parseMap(String json) {
+        if (json == null || json.isBlank()) {
+            return Map.of();
+        }
+        try {
+            return objectMapper.readValue(json, new TypeReference<Map<String, Object>>() {});
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException("Could not deserialize clientSettings", e);
         }
     }
 }
