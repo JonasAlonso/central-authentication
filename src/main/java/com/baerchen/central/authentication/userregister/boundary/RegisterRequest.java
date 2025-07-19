@@ -1,3 +1,9 @@
 package com.baerchen.central.authentication.userregister.boundary;
 
-public record RegisterRequest(String username, String password, String email) {}
+import jakarta.validation.constraints.*;
+
+public record RegisterRequest(
+        @NotBlank @Size(min = 3, max = 50) String username,
+        @NotBlank @Size(min = 6, max = 100) String password,
+        @Email @NotBlank String email
+) {}

@@ -2,8 +2,11 @@ package com.baerchen.central.authentication.userregister.control;
 
 import com.baerchen.central.authentication.userregister.boundary.RegisterRequest;
 import com.baerchen.central.authentication.userregister.boundary.RegisterResult;
+import com.baerchen.central.authentication.userregister.boundary.UserDTO;
+import com.baerchen.central.authentication.userregister.boundary.UserUpdateRequest;
 import com.baerchen.central.authentication.userregister.entity.User;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,9 +14,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,5 +57,56 @@ public class CustomUserDetailsService implements UserDetailsService {
         user.setRoles(Set.of("USER"));
         repo.save(user);
         return new RegisterResult(true, "Registration successful");
+    }
+
+    public Optional<UserDTO> getById(UUID id) {
+        return repo.findById(id).map(this::toDto);
+    }
+
+    public void deleteById(UUID id) {
+        if (!repo.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found: " + id);
+        }
+        repo.deleteById(id);
+    }
+
+    public UserDTO create(RegisterRequest req) {
+        if (repo.existsByUsername(req.username())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username already exists: " + req.username());
+        }
+
+        if (repo.existsByEmail(req.email())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already in use: " + req.email());
+        }
+
+        User user = new User();
+        user.setUsername(req.username());
+        user.setPassword(encoder.encode(req.password()));
+        user.setEmail(req.email());
+        user.setRoles(Set.of("USER"));
+        return toDto(repo.save(user));
+    }
+
+    public UserDTO update(UUID id, UserUpdateRequest update) {
+        User user = repo.findById(id).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found: " + id));
+
+        if (update.email() != null) user.setEmail(update.email());
+        if (update.info() != null) user.setInfo(update.info());
+        if (update.backend() != null) user.setBackend(update.backend());
+        if (update.roles() != null) user.setRoles(update.roles());
+
+        return toDto(repo.save(user));
+    }
+
+    private UserDTO toDto(User user) {
+        return new UserDTO(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getRoles(),
+                user.getBackend(),
+                user.getInfo()
+        );
     }
 }
