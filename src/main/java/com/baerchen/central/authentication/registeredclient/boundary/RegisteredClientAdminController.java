@@ -1,6 +1,6 @@
-package com.baerchen.central.authentication.client.boundary;
+package com.baerchen.central.authentication.registeredclient.boundary;
 
-import com.baerchen.central.authentication.client.control.RegisteredClientAdminService;
+import com.baerchen.central.authentication.registeredclient.control.RegisteredClientAdminService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +30,7 @@ public class RegisteredClientAdminController {
 
     @GetMapping("/{clientId}")
     public ResponseEntity<RegisteredClientDTO> get(@PathVariable String clientId) {
-        return service.get(clientId)
+        return service.getByClientId(clientId)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() ->
                         new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Client not found: [%s]",clientId))
@@ -42,9 +42,19 @@ public class RegisteredClientAdminController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping
-    public ResponseEntity<RegisteredClientDTO> update(@RequestBody RegisteredClientDTO dto){
-        return ResponseEntity.ok(this.service.update(dto));
+    @PutMapping("/{clientId}")
+    public ResponseEntity<RegisteredClientDTO> updateByClientId(@RequestBody RegisteredClientDTO dto){
+        String client = this.service.getByClientId(dto.clientId()).map(RegisteredClientDTO::clientId).stream().findFirst().orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Client not found: [%s]", dto.clientId()))
+        );
+        return ResponseEntity.ok(this.service.updateByClientId(dto));
+    }
+
+    public ResponseEntity<RegisteredClientDTO> updateById(@RequestBody RegisteredClientDTO dto){
+        String client = this.service.getById(dto.clientId()).map(RegisteredClientDTO::id).stream().findFirst().orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Client not found: [%s]", dto.clientId()))
+        );
+        return ResponseEntity.ok(this.service.updateById(dto));
     }
 
 }

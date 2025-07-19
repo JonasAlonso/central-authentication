@@ -1,4 +1,4 @@
-package com.baerchen.central.authentication.oauth.boundary;
+package com.baerchen.central.authentication.oauth.control;
 
 import com.baerchen.central.authentication.oauth.control.RolesClaimConverter;
 import com.baerchen.central.authentication.userregister.boundary.RegistrationController;
@@ -42,7 +42,9 @@ public class AuthServerConfig {
                          * */
                         // executed this once in order to create a client
                        .requestMatchers("/admin/**").permitAll()
-                  //      .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**", "/error").permitAll()
+
+                        //      .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(Customizer.withDefaults())
@@ -52,7 +54,7 @@ public class AuthServerConfig {
 
                 )
                 //.csrf(csrf -> csrf.ignoringRequestMatchers("/oauth2/token", RegistrationController.REGISTRATION_ENDPOINT));
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/oauth2/token", RegistrationController.REGISTRATION_ENDPOINT,"/admin/**"));
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/oauth2/token", RegistrationController.REGISTRATION_ENDPOINT,"/admin/**", "/admin/clients/**"));
 
         return http.build();
 

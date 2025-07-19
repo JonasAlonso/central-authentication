@@ -1,4 +1,4 @@
-package com.baerchen.central.authentication.client.boundary;
+package com.baerchen.central.authentication.registeredclient.boundary;
 
 import java.util.Set;
 
