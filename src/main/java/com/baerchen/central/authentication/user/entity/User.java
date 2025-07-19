@@ -1,4 +1,4 @@
-package com.baerchen.central.authentication.userregister.entity;
+package com.baerchen.central.authentication.user.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;

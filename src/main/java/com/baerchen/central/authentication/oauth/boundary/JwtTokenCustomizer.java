@@ -1,6 +1,6 @@
 package com.baerchen.central.authentication.oauth.boundary;
 
-import com.baerchen.central.authentication.userregister.control.UserRepository;
+import com.baerchen.central.authentication.user.control.UserRepository;
 import java.util.Optional;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;

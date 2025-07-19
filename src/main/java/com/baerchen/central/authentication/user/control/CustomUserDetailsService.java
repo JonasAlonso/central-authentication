@@ -1,10 +1,10 @@
-package com.baerchen.central.authentication.userregister.control;
+package com.baerchen.central.authentication.user.control;
 
-import com.baerchen.central.authentication.userregister.boundary.RegisterRequest;
-import com.baerchen.central.authentication.userregister.boundary.RegisterResult;
-import com.baerchen.central.authentication.userregister.boundary.UserDTO;
-import com.baerchen.central.authentication.userregister.boundary.UserUpdateRequest;
-import com.baerchen.central.authentication.userregister.entity.User;
+import com.baerchen.central.authentication.user.boundary.RegisterRequest;
+import com.baerchen.central.authentication.user.boundary.RegisterResult;
+import com.baerchen.central.authentication.user.boundary.UserDTO;
+import com.baerchen.central.authentication.user.boundary.UserUpdateRequest;
+import com.baerchen.central.authentication.user.entity.User;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;

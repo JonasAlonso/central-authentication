@@ -1,4 +1,4 @@
-package com.baerchen.central.authentication.userregister.boundary;
+package com.baerchen.central.authentication.user.boundary;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

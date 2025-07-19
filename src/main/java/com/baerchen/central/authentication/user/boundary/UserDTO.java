@@ -1,4 +1,4 @@
-package com.baerchen.central.authentication.userregister.boundary;
+package com.baerchen.central.authentication.user.boundary;
 
 import java.util.List;
 import java.util.Set;

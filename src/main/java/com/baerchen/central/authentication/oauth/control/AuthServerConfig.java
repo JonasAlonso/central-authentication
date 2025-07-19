@@ -1,6 +1,6 @@
 package com.baerchen.central.authentication.oauth.control;
 
-import com.baerchen.central.authentication.userregister.boundary.RegistrationController;
+import com.baerchen.central.authentication.user.boundary.RegistrationController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;

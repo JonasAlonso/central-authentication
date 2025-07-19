@@ -1,6 +1,6 @@
-package com.baerchen.central.authentication.userregister.boundary;
+package com.baerchen.central.authentication.user.boundary;
 
-import com.baerchen.central.authentication.userregister.control.CustomUserDetailsService;
+import com.baerchen.central.authentication.user.control.CustomUserDetailsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
