@@ -33,7 +33,14 @@ public class CustomRegisteredClientRepo implements Parser {
 
     public void updateClientById(RegisteredClient client){
        var sql = "UPDATE oauth2_registered_client SET client_authentication_methods = ?, authorization_grant_types = ?, redirect_uris = ?, scopes = ?, client_settings = ? WHERE id = ?";
-        this.jdbcTemplate.update(sql, client.getClientAuthenticationMethods(), client.getAuthorizationGrantTypes(), client.getRedirectUris(), client.getScopes(), client.getClientSettings(), client.getId());
+        this.jdbcTemplate.update(sql,
+                parse(client.getClientAuthenticationMethods(), ClientAuthenticationMethod::getValue),
+                parse(client.getAuthorizationGrantTypes(), AuthorizationGrantType::getValue),
+                parse(client.getRedirectUris(), String::valueOf),
+                parse(client.getScopes(), String::valueOf),
+                convertToDatabaseColumn(client.getClientSettings().getSettings()),
+                client.getId());
+
     }
 
     public void updateClientByClientId(RegisteredClient client) {
