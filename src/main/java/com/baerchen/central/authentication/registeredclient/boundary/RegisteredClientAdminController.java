@@ -50,6 +50,7 @@ public class RegisteredClientAdminController {
         return ResponseEntity.ok(this.service.updateByClientId(dto));
     }
 
+
     @PutMapping("/id/{id}")
     public ResponseEntity<RegisteredClientDTO> updateById(@PathVariable String id, @RequestBody RegisteredClientDTO dto){
         this.service.getById(id).orElseThrow(() ->
