@@ -39,6 +39,7 @@ public class CustomRegisteredClientRepo implements Parser {
                 parse(client.getScopes(), String::valueOf),
                 convertToDatabaseColumn(client.getClientSettings().getSettings()),
                 client.getId());
+
     }
 
     public void updateClientByClientId(RegisteredClient client) {

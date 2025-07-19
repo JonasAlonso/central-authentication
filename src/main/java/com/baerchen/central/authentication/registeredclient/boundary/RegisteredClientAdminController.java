@@ -50,12 +50,23 @@ public class RegisteredClientAdminController {
         return ResponseEntity.ok(this.service.updateByClientId(dto));
     }
 
-    @PutMapping("/id")
-    public ResponseEntity<RegisteredClientDTO> updateById(@RequestBody RegisteredClientDTO dto){
-        this.service.getById(dto.id()).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Client not found: [%s]", dto.id()))
+
+    @PutMapping("/id/{id}")
+    public ResponseEntity<RegisteredClientDTO> updateById(@PathVariable String id, @RequestBody RegisteredClientDTO dto){
+        this.service.getById(id).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Client not found: [%s]", id))
         );
-        return ResponseEntity.ok(this.service.updateById(dto));
+        RegisteredClientDTO updated = new RegisteredClientDTO(
+                id,
+                dto.clientId(),
+                dto.clientSecret(),
+                dto.redirectUris(),
+                dto.scopes(),
+                dto.authenticationMethods(),
+                dto.grantTypes(),
+                dto.clientSettings()
+        );
+        return ResponseEntity.ok(this.service.updateById(updated));
     }
 
 }
