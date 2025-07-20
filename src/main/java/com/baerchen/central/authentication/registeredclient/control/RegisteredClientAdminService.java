@@ -20,9 +20,11 @@ public class RegisteredClientAdminService {
     private final PasswordEncoder encoder;
     private final CustomRegisteredClientRepo customRegisteredClientRepo;
     private final RegisteredClientMapper mapper;
+    private final RegisteredClientValidator validator;
 
     public RegisteredClientDTO create(RegisteredClientDTO dto){
         RegisteredClient rc = this.mapper.toEntity(dto,this.encoder);
+        this.validator.validate(dto);
         this.repo.save(rc);
         return dto;
     }
@@ -46,6 +48,7 @@ public class RegisteredClientAdminService {
     public RegisteredClientDTO updateByClientId(RegisteredClientDTO dto){
         getByClientId(dto.clientId()).orElseThrow();
         log.info("Client [{}] found proceeding to the update.", dto.clientId());
+        this.validator.validate(dto);
         this.customRegisteredClientRepo.updateClientByClientId(this.mapper.toEntityForUpdate(dto, this.encoder));
         return dto;
     }
@@ -53,6 +56,7 @@ public class RegisteredClientAdminService {
     public RegisteredClientDTO updateById(RegisteredClientDTO dto){
         getById(dto.id()).orElseThrow();
         log.info("Client [{}] found proceeding to the update.", dto.id());
+        this.validator.validate(dto);
         this.repo.save(this.mapper.toEntityForUpdate(dto, this.encoder));
         return dto;
     }
@@ -64,4 +68,6 @@ public class RegisteredClientAdminService {
     public List<RegisteredClientDTO> getClients() {
         return this.customRegisteredClientRepo.listAllClients();
     }
+
+
 }
