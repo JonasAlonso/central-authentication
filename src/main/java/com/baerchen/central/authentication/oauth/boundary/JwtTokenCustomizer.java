@@ -2,6 +2,8 @@ package com.baerchen.central.authentication.oauth.boundary;
 
 import com.baerchen.central.authentication.user.control.UserRepository;
 import java.util.Optional;
+
+import com.baerchen.central.authentication.user.entity.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
@@ -12,11 +14,14 @@ public class JwtTokenCustomizer {
 
     @Bean
     public OAuth2TokenCustomizer<JwtEncodingContext> tokenCustomizer(UserRepository userRepository){
-        return context -> Optional.ofNullable(context.getPrincipal())
-                .map(principal -> principal.getName())
-                .flatMap(userRepository::findByUsername)
-                .ifPresent(user -> context.getClaims().claim("roles", user.getRoles()));
+        return context -> {
+            if (context.getPrincipal() != null && context.getPrincipal().getName()!=null) {
+                String username = context.getPrincipal().getName();
+                User user = userRepository.findByUsername(username).orElse(null);
+                if (user != null){
+                    context.getClaims().claim("roles", user.getRoles());
+                }
+            }
+        };
     }
-
-
 }

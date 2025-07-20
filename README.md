@@ -39,7 +39,14 @@ A Spring Boot 3.5.3 application using Spring Authorization Server 1.5.1 to act a
 
 ## 🗂️ Project Structure (EBC pattern)
 
-
+com.baerchen.central.authentication
+├── authentication                # JWT converter, PasswordEncoder, filter chains
+├── oauth                         # Registered client management + config
+├── userregister                  # Registration endpoint & service
+├── user                          # User entity, roles, repo, service
+├── config                        # Liquibase, data sources, common config
+├── logging                       # ControllerLoggingAspect
+└── exception                     # GlobalExceptionHandler
 ---
 
 ## 🧪 Test Strategy

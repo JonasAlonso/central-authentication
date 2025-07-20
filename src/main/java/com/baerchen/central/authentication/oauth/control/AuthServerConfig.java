@@ -14,6 +14,7 @@ import org.springframework.security.oauth2.server.authorization.config.annotatio
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 
 import javax.sql.DataSource;
 
@@ -38,11 +39,18 @@ public class AuthServerConfig {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
 
         http
-                .securityMatcher("/oauth2/**", "/.well-known/**") // ✅ properly scoped
+                .securityMatcher("/oauth2/**", "/.well-known/**")
                 .getConfigurer(OAuth2AuthorizationServerConfigurer.class)
                 .oidc(withDefaults());
 
-        http.csrf(csrf -> csrf.ignoringRequestMatchers("/oauth2/**")); // optional
+        http.csrf(csrf -> csrf.ignoringRequestMatchers("/oauth2/**"))
+                /**
+                 * these lines ensure that unauthenticated requests to OAuth2 endpoints
+                 * get redirected to /login, as expected by browser-based clients.
+                 */
+                .exceptionHandling( ex -> ex.authenticationEntryPoint(
+                        new LoginUrlAuthenticationEntryPoint("/login")
+                ));
 
         return http.build();
     }

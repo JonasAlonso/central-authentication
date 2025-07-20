@@ -1,7 +1,6 @@
 package com.baerchen.central.authentication.registeredclient.control;
 
 import com.baerchen.central.authentication.registeredclient.boundary.RegisteredClientDTO;
-import com.baerchen.central.authentication.registeredclient.boundary.RegisteredClientMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -9,6 +8,7 @@ import org.springframework.security.oauth2.server.authorization.client.JdbcRegis
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -59,5 +59,9 @@ public class RegisteredClientAdminService {
 
     public void deleteByClientId(String clientId) {
         this.customRegisteredClientRepo.deleteClientByClientId(clientId);
+    }
+
+    public List<RegisteredClientDTO> getClients() {
+        return this.customRegisteredClientRepo.listAllClients();
     }
 }

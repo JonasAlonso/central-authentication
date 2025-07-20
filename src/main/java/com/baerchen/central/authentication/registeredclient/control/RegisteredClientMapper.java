@@ -1,5 +1,6 @@
-package com.baerchen.central.authentication.registeredclient.boundary;
+package com.baerchen.central.authentication.registeredclient.control;
 
+import com.baerchen.central.authentication.registeredclient.boundary.RegisteredClientDTO;
 import com.baerchen.central.authentication.runtime.entity.Defaults;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;

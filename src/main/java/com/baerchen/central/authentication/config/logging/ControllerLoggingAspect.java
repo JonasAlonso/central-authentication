@@ -1,4 +1,4 @@
-package com.baerchen.central.authentication.runtime.control;
+package com.baerchen.central.authentication.config.logging;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;

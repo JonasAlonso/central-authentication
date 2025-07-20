@@ -1,4 +1,4 @@
-package com.baerchen.central.authentication.runtime.control;
+package com.baerchen.central.authentication.config.error;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

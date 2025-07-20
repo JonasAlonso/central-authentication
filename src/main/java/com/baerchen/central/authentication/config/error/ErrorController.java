@@ -1,4 +1,4 @@
-package com.baerchen.central.authentication.registeredclient.control;
+package com.baerchen.central.authentication.config.error;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;

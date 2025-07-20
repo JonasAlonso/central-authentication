@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 
 @RestController
 /**
@@ -26,6 +28,11 @@ public class RegisteredClientAdminController {
     @PostMapping
     public ResponseEntity<RegisteredClientDTO> create(@RequestBody RegisteredClientDTO dto) {
         return ResponseEntity.ok(this.service.create(dto.cleaned()));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<RegisteredClientDTO>> getClients(){
+        return ResponseEntity.ok(this.service.getClients());
     }
 
     @GetMapping("/{clientId}")

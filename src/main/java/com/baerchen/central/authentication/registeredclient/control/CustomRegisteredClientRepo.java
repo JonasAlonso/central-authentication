@@ -6,6 +6,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
@@ -17,11 +19,17 @@ import java.util.Map;
 
 
 @Service
-@AllArgsConstructor
 public class CustomRegisteredClientRepo implements Parser {
 
     private final JdbcTemplate jdbcTemplate;
-    private final ObjectMapper objectMapper;
+
+    private final ObjectMapper polymorphicMapper;
+
+    @Autowired
+    public CustomRegisteredClientRepo(JdbcTemplate jdbcTemplate, @Qualifier("polymorphicMapper") ObjectMapper polymorphicMapper) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.polymorphicMapper = polymorphicMapper;
+    }
 
     public void deleteClientById(String id) {
         this.jdbcTemplate.update("DELETE FROM oauth2_registered_client WHERE id = ?", id);
@@ -49,7 +57,7 @@ public class CustomRegisteredClientRepo implements Parser {
     }
 
     public List<RegisteredClientDTO> listAllClients() {
-        return jdbcTemplate.query(
+        return this.jdbcTemplate.query(
                 "SELECT id, client_id, client_secret, redirect_uris, scopes, client_authentication_methods, authorization_grant_types, client_settings FROM oauth2_registered_client",
                 (rs, rowNum) -> new RegisteredClientDTO(
                         rs.getString("id"),
@@ -65,7 +73,7 @@ public class CustomRegisteredClientRepo implements Parser {
 
     public  String convertToDatabaseColumn(Map<String, Object> attribute) {
         try {
-            return objectMapper.writeValueAsString(attribute);
+            return this.polymorphicMapper.writeValueAsString(attribute);
         } catch (JsonProcessingException e) {
             throw new IllegalArgumentException("Could not serialize clientSettings", e);
         }
@@ -76,7 +84,7 @@ public class CustomRegisteredClientRepo implements Parser {
             return Map.of();
         }
         try {
-            return objectMapper.readValue(json, new TypeReference<Map<String, Object>>() {});
+            return this.polymorphicMapper.readValue(json, new TypeReference<Map<String, Object>>() {});
         } catch (JsonProcessingException e) {
             throw new IllegalArgumentException("Could not deserialize clientSettings", e);
         }
