@@ -17,4 +17,8 @@
     <changeSet id="create-oauth2-authorization-consent-table" author="baerchen">
         <sqlFile path="db/sql/oauth2_authorization-consent.sql"/>
     </changeSet>
+
+    <changeSet id="create-audit-log-table" author="baerchen">
+        <sqlFile path="db/sql/audit_log.sql" />
+    </changeSet>
 </databaseChangeLog>
