@@ -168,7 +168,7 @@
 		<!-- for filtering sql -->
 		<resources>
 			<resource>
-				<directory>src/main/sql</directory>
+				<directory>initdb/</directory>
 				<filtering>true</filtering>
 				<includes>
 					<include>**/*.sql</include>
