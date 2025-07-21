@@ -1,0 +1,45 @@
+name: Code Quality Check
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "*" ]
+
+jobs:
+  build-and-analyze:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+
+      - name: Build with Maven (generate JaCoCo + run tests)
+        run: mvn clean verify
+
+      - name: SonarQube Scan
+        run: mvn sonar:sonar \
+          -Dsonar.projectKey=my-project-key \
+          -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.organization=my-org \
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+
+      # Optional: Upload JaCoCo Report as artifact
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: target/site/jacoco
