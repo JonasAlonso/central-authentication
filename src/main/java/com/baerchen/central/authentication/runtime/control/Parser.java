@@ -9,7 +9,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 public interface Parser {
 
-
     default Set<String> parseSet(String input) {
         if (input == null || input.isBlank()) {
             return Set.of();

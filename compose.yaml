@@ -1,9 +1,25 @@
 services:
   postgres:
     image: 'postgres:17.5'
+    container_name: central-authentication-postgres-1
+    restart: unless-stopped
     environment:
-      - 'POSTGRES_DB=centralauthdb'
-      - 'POSTGRES_PASSWORD=pieis18235312+'
-      - 'POSTGRES_USER=centraldb'
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - '5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  cauth-app:
+    build: .
+    container_name: cauth_app
+    depends_on:
+      - postgres
+    ports:
+      - "9090:9090"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+volumes:
+  pgdata:

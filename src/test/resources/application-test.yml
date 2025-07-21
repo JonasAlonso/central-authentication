@@ -2,7 +2,7 @@ spring:
   application:
     name: Central Authentication Service
   profiles:
-    active: dev
+    active: test
   datasource:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
