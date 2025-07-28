@@ -117,3 +117,6 @@ Here’s a % breakdown:
 
 
 Nearly complete. Next step -> finalize token flow tests and polish docs.
+
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=JonasAlonso_central-authentication&metric=coverage)](https://sonarcloud.io/summary/new_code?id=JonasAlonso_central-authentication)
+

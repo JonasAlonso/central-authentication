@@ -36,5 +36,5 @@ build/
 
 .env
 .env.prod
-env
+backup
 

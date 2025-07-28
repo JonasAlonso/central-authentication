@@ -33,18 +33,10 @@
 				<ENV_PREFIX>DEV</ENV_PREFIX>
 			</properties>
 		</profile>
-
 		<profile>
 			<id>test</id>
 			<properties>
 				<ENV_PREFIX>TEST</ENV_PREFIX>
-			</properties>
-		</profile>
-
-		<profile>
-			<id>local</id>
-			<properties>
-				<ENV_PREFIX>LOCAL</ENV_PREFIX>
 			</properties>
 		</profile>
 	</profiles>
@@ -55,6 +47,9 @@
 		<lombok.version>1.18.32</lombok.version>
 		<mapstruct.version>1.5.5.Final</mapstruct.version>
 		<postgresql.version>42.7.3</postgresql.version>
+		<database.user>CAUTH</database.user>
+		<database.pswd>875uhifngdf</database.pswd>
+		<database.schema>CENTRAL_AUTH</database.schema>
 		<env>dev</env> <!-- fallback if none is provided -->
 	</properties>
 
@@ -163,24 +158,24 @@
 			<version>2.5.0</version>
 		</dependency>
 	</dependencies>
-
 	<build>
-		<!-- for filtering sql -->
-		<resources>
-			<resource>
-				<directory>initdb/</directory>
-				<filtering>true</filtering>
-				<includes>
-					<include>**/*.sql</include>
-				</includes>
-				<targetPath>${project.build.directory}/filtered-sql</targetPath>
-			</resource>
-		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>sql-maven-plugin</artifactId>
 				<version>1.5</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.postgresql</groupId>
+						<artifactId>postgresql</artifactId>
+						<version>42.7.3</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<driver>org.postgresql.Driver</driver>
+					<url>jdbc:postgresql://localhost:5432/4KGBBAD</url>
+					<settingsKey>local.server</settingsKey>
+				</configuration>
 				<executions>
 					<execution>
 						<id>initdb</id>
@@ -189,28 +184,16 @@
 							<goal>execute</goal>
 						</goals>
 						<configuration>
-							<driver>org.postgresql.Driver</driver>
 							<enableFiltering>true</enableFiltering>
-							<url>jdbc:postgresql://localhost:5432/centralauthdb</url>
-							<username>${DATASOURCE_USERNAME}</username>
-							<password>${DATASOURCE_PASSWORD}</password>
-							<autocommit>true</autocommit>
 							<srcFiles>
-								<srcFile>${project.build.directory}/initdb/initdb.sql</srcFile>
+								<srcFile>${project.basedir}/init/initdb.sql</srcFile>
 							</srcFiles>
+							<onError>abort</onError>
 							<delimiter>;</delimiter>
 						</configuration>
 					</execution>
 				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>org.postgresql</groupId>
-						<artifactId>postgresql</artifactId>
-						<version>${postgresql.version}</version>
-					</dependency>
-				</dependencies>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -224,15 +207,15 @@
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
 							<version>${lombok.version}</version>
-					</path>
+						</path>
 						<path>
 							<groupId>org.mapstruct</groupId>
 							<artifactId>mapstruct-processor</artifactId>
 							<version>${mapstruct.version}</version>
 						</path>
-				</annotationProcessorPaths>
+					</annotationProcessorPaths>
 				</configuration>
-		</plugin>
+			</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
@@ -252,8 +235,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
 		</plugins>
 	</build>
-
 </project>
