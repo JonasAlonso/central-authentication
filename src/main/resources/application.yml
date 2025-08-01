@@ -3,6 +3,8 @@ spring:
     name: Central Authentication Service
   profiles:
     active: dev
+  config:
+    import: optional:file:.env-dev[.properties]
   datasource:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
@@ -13,7 +15,13 @@ spring:
     show-sql: true
     dialect: org.hibernate.dialect.PostgreSQLDialect
   liquibase:
+    url: ${SPRING_DATASOURCE_URL}
+    user: ${DB_USER}
+    password: ${DB_PASSWORD}
+    default-schema: ${DB_SCHEMA}
     change-log: classpath:/db/central-auth-changelog-master.xml
+
+
 
 server:
   port: 9090

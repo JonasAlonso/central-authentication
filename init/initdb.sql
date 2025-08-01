@@ -1,8 +1,8 @@
+DROP SCHEMA IF EXISTS ${ENV_PREFIX}_${database.schema} CASCADE;
+
 DROP ROLE IF EXISTS ${ENV_PREFIX}_${database.user};
 
 CREATE ROLE ${ENV_PREFIX}_${database.user} LOGIN PASSWORD '${database.pswd}';
-
-DROP SCHEMA IF EXISTS ${ENV_PREFIX}_${database.schema} CASCADE;
 
 CREATE SCHEMA ${ENV_PREFIX}_${database.schema} AUTHORIZATION ${ENV_PREFIX}_${database.user};
 

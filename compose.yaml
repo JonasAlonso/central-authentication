@@ -1,16 +1,18 @@
 services:
   postgres:
-    image: 'postgres:17.5'
-    container_name: datasource-4KGBBAD
+    image: postgres:17.5
+    container_name: pg-4kgbbad-1
     restart: unless-stopped
-    environment:
-      POSTGRES_DB: ${SPRING_DATASOURCE_URL}
-      POSTGRES_USER: ${SPRING_DATASOURCE_USERNAME}
-      POSTGRES_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
     ports:
-      - '5432'
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pg-4kgbbad-volume:/var/lib/postgresql/data
+    networks:
+      - pg-4kgbbad-net
 
   cauth-app:
     build: .
@@ -21,5 +23,12 @@ services:
       - "9090:9090"
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+    networks:
+      - pg-4kgbbad-net
 volumes:
-  pgdata:
+  pg-4kgbbad-volume:
+
+networks:
+  pg-4kgbbad-net:
+    name: pg-4kgbbad-net
+

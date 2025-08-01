@@ -50,7 +50,6 @@
 		<database.user>CAUTH</database.user>
 		<database.pswd>875uhifngdf</database.pswd>
 		<database.schema>CENTRAL_AUTH</database.schema>
-		<env>dev</env> <!-- fallback if none is provided -->
 	</properties>
 
 	<dependencyManagement>
@@ -135,11 +134,7 @@
                         <version>6.5.1</version>
                         <scope>test</scope>
                 </dependency>
-                <dependency>
-                        <groupId>com.h2database</groupId>
-                        <artifactId>h2</artifactId>
-                        <scope>test</scope>
-                </dependency>
+
                 <!-- Core MapStruct -->
 		<dependency>
 			<groupId>org.mapstruct</groupId>
@@ -157,6 +152,13 @@
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>2.5.0</version>
 		</dependency>
+		<dependency>
+			<groupId>me.paulschwarz</groupId>
+			<artifactId>spring-dotenv</artifactId>
+			<version>4.0.0</version> <!-- or 3.0.0 for Java 8 -->
+		</dependency>
+
+
 	</dependencies>
 	<build>
 		<plugins>
