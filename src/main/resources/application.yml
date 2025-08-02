@@ -4,24 +4,26 @@ spring:
   profiles:
     active: dev
   config:
-    import: optional:file:.env-dev[.properties]
+    import: optional:file:.env[.properties]
   datasource:
-    url: ${SPRING_DATASOURCE_URL}
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
+    url: jdbc:postgresql://${database.host}:${database.port}/${pg.ds}
+    username: ${spring.profiles.active}_${database.user}
+    password: ${database.pswd}
+
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
     dialect: org.hibernate.dialect.PostgreSQLDialect
   liquibase:
-    url: ${SPRING_DATASOURCE_URL}
-    user: ${DB_USER}
-    password: ${DB_PASSWORD}
-    default-schema: ${DB_SCHEMA}
+    url: jdbc:postgresql://${database.host}:${database.port}/${pg.ds}
+    user: ${pg.usr}
+    password: ${pg.pswd}
+    default-schema: ${spring.profiles.active}_${database.schema}
     change-log: classpath:/db/central-auth-changelog-master.xml
 
-
+datasource:
+  port:
 
 server:
   port: 9090

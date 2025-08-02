@@ -1,26 +1,6 @@
 spring:
-  application:
-    name: Central Authentication Service
   profiles:
     active: test
-  config:
-    import: optional:file:.env-test[.properties]
-
-  datasource:
-    url: ${SPRING_DATASOURCE_URL}
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    dialect: org.hibernate.dialect.PostgreSQLDialect
-  liquibase:
-    url: ${SPRING_DATASOURCE_URL}
-    user: ${DB_USER}
-    password: ${DB_PASSWORD}
-    default-schema: ${DB_SCHEMA}
-    change-log: classpath:/db/central-auth-changelog-master.xml
 
 server:
   port: 9090
@@ -45,7 +25,6 @@ logging:
     org.springframework.security.oauth2.client.endpoint: DEBUG
     org.springframework.security.web.FilterChainProxy: TRACE
     org.springframework.web.client.RestTemplate: TRACE
-
 
 
 # expose /actuator/httptrace, etc., to get recent request traces (max 100 by default):

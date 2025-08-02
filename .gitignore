@@ -34,9 +34,7 @@ build/
 
 ## environments
 
+secret.properties
 .env
-.env.prod
-.env-dev
-.env-test
 backup
 dockerrun.txt
