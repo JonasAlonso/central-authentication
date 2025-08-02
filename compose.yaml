@@ -3,6 +3,11 @@ services:
     image: postgres:17.5
     container_name: pg-4kgbbad-1
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     ports:
       - "5432:5432"
     environment:
@@ -17,8 +22,15 @@ services:
   cauth-app:
     build: .
     container_name: cauth_app
+    restart: unless-stopped
     depends_on:
       - postgres
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9090/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
     ports:
       - "9090:9090"
     environment:
