@@ -1,0 +1,32 @@
+# Maven build output
+target/
+**/target/
+
+# Git repositories
+.git
+.gitignore
+
+# Maven Wrapper
+.mvn/
+mvnw
+mvnw.cmd
+
+# IDE directories and project files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Environment files
+.env
+.env-dev
+.env.prod
+.env-test
+
+# Docker and Compose artifacts
+compose.yaml
+dockerrun.txt
+
+# Miscellaneous
+backup
