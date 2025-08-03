@@ -1,11 +1,7 @@
 # ==== CONFIGURABLE PARAMETERS ====
 # Default values (can be overridden when running make)
-MACHINE           ?= 4kgbbad
-DRIVER            ?= postgres
-DRIVER_VERSION    ?= 17.5
-POSTGRES_PREFIX   := pg
-APP               ?= cauth
-APP_NAME          ?= central-authentication
+include .env
+export
 
 # Derived identifiers
 VOLUME_NAME       := $(POSTGRES_PREFIX)-$(MACHINE)-$(DRIVER_VERSION)-volume
@@ -46,6 +42,14 @@ db-mount-container:
 	@echo "		-e PGPASSWORD=\$$DB_PASSWORD \\"
 	@echo "		-v \$$\(pwd\)/$(APP)-init.sql:/init.sql:ro \\"
 	@echo "		$(DRIVER):$(DRIVER_VERSION) psql -h $(DB_CONTAINER) -U \$$DB -d \$$DB -f /init.sql"
+
+run-spring:
+	@echo "🚀 Running Spring Boot with:"
+	@echo "    APP=$(APP)"
+	@echo "    DRIVER=$(DRIVER)"
+	@echo "    DB URL=$(SPRING_DATASOURCE_URL)"
+	./mvnw spring-boot:run
+
 
 generate-app-structure:
 	@mkdir -p $(APP)
