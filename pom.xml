@@ -46,12 +46,7 @@
 		<lombok.version>1.18.32</lombok.version>
 		<mapstruct.version>1.5.5.Final</mapstruct.version>
 		<postgresql.version>42.7.3</postgresql.version>
-		<database.user>cauth</database.user>
-		<database.pswd>875uhifngdf</database.pswd>
-		<database.schema>central_auth</database.schema>
-		<database.port>5432</database.port>
-		<database.host>localhost</database.host>
-		<pg.ds>4KGBBAD</pg.ds>
+		<database.host>pg-4kgbbad-1</database.host>
 	</properties>
 
 	<dependencyManagement>
@@ -191,8 +186,8 @@
 				</dependencies>
 				<configuration>
 					<driver>org.postgresql.Driver</driver>
-					<url>jdbc:postgresql://${database.host}:${database.port}/${pg.ds}</url>
-					<settingsKey>local.server</settingsKey>
+					<url>jdbc:postgresql://${database.host}:5432/postgres</url>
+					<settingsKey>infra.postgres.17.5</settingsKey>
 				</configuration>
 				<executions>
 					<execution>
