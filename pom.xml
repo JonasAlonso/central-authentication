@@ -26,18 +26,9 @@
 		<tag/>
 		<url/>
 	</scm>
+
 		<profiles>
-		<profile>
-			<id>dev</id>
-			<properties>
-				<ENV_PREFIX>dev</ENV_PREFIX>
-			</properties>
-		</profile>
-		<profile>
-			<id>test</id><properties>
-			<ENV_PREFIX>test</ENV_PREFIX>
-		</properties>
-		</profile>
+		<!-- in the end would I ever need these? -->
 	</profiles>
 	<properties>
 		<java.version>21</java.version>
@@ -161,52 +152,8 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
 	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>properties-maven-plugin</artifactId>
-					<version>1.2.1</version>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>sql-maven-plugin</artifactId>
-				<version>1.5</version>
-				<dependencies>
-					<dependency>
-						<groupId>org.postgresql</groupId>
-						<artifactId>postgresql</artifactId>
-						<version>${postgresql.version}</version>
-					</dependency>
-				</dependencies>
-				<configuration>
-					<driver>org.postgresql.Driver</driver>
-					<url>jdbc:postgresql://${database.host}:5432/postgres</url>
-					<settingsKey>infra.postgres.17.5</settingsKey>
-				</configuration>
-				<executions>
-					<execution>
-						<id>initdb</id>
-						<phase>none</phase>
-						<goals>
-							<goal>execute</goal>
-						</goals>
-						<configuration>
-							<enableFiltering>true</enableFiltering>
-							<srcFiles>
-								<srcFile>${project.basedir}/init/initdb.sql</srcFile>
-							</srcFiles>
-							<onError>abort</onError>
-							<delimiter>;</delimiter>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
