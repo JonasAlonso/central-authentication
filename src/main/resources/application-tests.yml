@@ -1,0 +1,56 @@
+spring:
+  application:
+    name: Central Authentication Service
+  profiles:
+    active: dev
+  config:
+    import: optional:file:.env[.properties]
+  datasource:
+    url: jdbc:postgresql://pg-4kgbbad-17.5:5432/postgres
+    username: ${DB}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    dialect: org.hibernate.dialect.PostgreSQLDialect
+  liquibase:
+    url: jdbc:postgresql://pg-4kgbbad-17.5:5432/postgres
+    user: ${DB}
+    password: ${DB_PASSWORD}
+    default-schema: ${APP}
+    change-log: classpath:/db/central-auth-changelog-master.xml
+
+server:
+  port: 9090
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: always
+
+###############################
+#         Logging             #
+###############################
+
+logging:
+  level:
+    root: DEBUG
+    com.baerchen: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.http: TRACE
+    org.springframework.boot.autoconfigure.liquibase: DEBUG
+    org.springframework.security: TRACE
+    org.springframework.security.oauth2: TRACE
+    org.springframework.security.oauth2.client.endpoint: DEBUG
+    org.springframework.security.web.FilterChainProxy: TRACE
+    org.springframework.web.client.RestTemplate: TRACE
+
+
+# expose /actuator/httptrace, etc., to get recent request traces (max 100 by default):
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
