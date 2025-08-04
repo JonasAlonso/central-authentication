@@ -36,8 +36,10 @@
 		<spring-boot.version>3.5.3</spring-boot.version>
 		<lombok.version>1.18.32</lombok.version>
 		<mapstruct.version>1.5.5.Final</mapstruct.version>
+		<postgres.prefix>pg</postgres.prefix>
+		<docker.postgres.version>17.5</docker.postgres.version>
 		<postgresql.version>42.7.3</postgresql.version>
-		<database.host>pg-4kgbbad-1</database.host>
+		<docker.postgres.host>pg-4kgbbad-17.5</docker.postgres.host>
 	</properties>
 
 	<dependencyManagement>

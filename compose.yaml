@@ -6,13 +6,14 @@ services:
     ports:
       - "5432:5432"
     environment:
+      #these are exported from the Makefile :')
       POSTGRES_DB: ${DB}
       POSTGRES_USER: ${DB}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
-      - ${VOLUME_NAME:pg-default-volume}:/var/lib/postgresql/data
+      - ${VOLUME:pg-default-volume}:/var/lib/postgresql/data
     networks:
-      - ${NETWORK_NAME:infra-net}
+      - ${NETWORK:infra-net}
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}" ]
       interval: 10s
@@ -38,6 +39,7 @@ services:
     networks:
       - 4kgbbad-net
 
+# behold the beauty
 volumes:
   pg-4kgbbad-17.5-volume:
     name: pg-4kgbbad-17.5-volume
