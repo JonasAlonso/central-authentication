@@ -1,49 +1,21 @@
 services:
-  postgres:
-    image: postgres:${POSTGRES_VERSION:17.5}
-    container_name: ${CONTAINER_NAME:postgres-default-1}
-    restart: unless-stopped
-    ports:
-      - "5432:5432"
-    environment:
-      #these are exported from the Makefile :')
-      POSTGRES_DB: ${DB}
-      POSTGRES_USER: ${DB}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-    volumes:
-      - ${VOLUME:pg-default-volume}:/var/lib/postgresql/data
-    networks:
-      - ${NETWORK:infra-net}
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
-  cauth-app:
+  app:
     build: .
-    container_name: cauth_app
-    restart: unless-stopped
-    depends_on:
-      - postgres
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9090/actuator/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 30s
-    ports:
-      - "9090:9090"
-    environment:
-      - dev
+    container_name: central
     networks:
       - 4kgbbad-net
+    environment:
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: cauth
+      SPRING_DATASOURCE_PASSWORD: 1234567
+      LIQUIBASE_URL: jdbc:postgresql://pg-4kgbbad-5:5432/postgres
+      DB_PASSWORD: ${DB_PASSWORD}
 
-# behold the beauty
 volumes:
-  pg-4kgbbad-17.5-volume:
-    name: pg-4kgbbad-17.5-volume
+  pg-4kgbbad-vol:
+    name: pg-4kgbbad-vol
 
 networks:
   4kgbbad-net:
-    name: 4kgbbad-net
+    external: true

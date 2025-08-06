@@ -6,9 +6,9 @@ spring:
   config:
     import: optional:file:.env[.properties]
   datasource:
-    url: jdbc:postgresql://pg-4kgbbad-17.5:5432/postgres
-    username: ${DB}
-    password: ${DB_PASSWORD}
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${APP}
+    password: ${APP_PASSWORD}
 
   jpa:
     hibernate:
@@ -16,11 +16,12 @@ spring:
     show-sql: true
     dialect: org.hibernate.dialect.PostgreSQLDialect
   liquibase:
-    url: jdbc:postgresql://pg-4kgbbad-17.5:5432/postgres
-    user: ${DB}
-    password: ${DB_PASSWORD}
-    default-schema: ${APP}
     change-log: classpath:/db/central-auth-changelog-master.xml
+    url: ${SPRING_DATASOURCE_URL}
+    user: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    default-schema: ${APP}
+
 
 server:
   port: 9090

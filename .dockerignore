@@ -6,11 +6,6 @@ target/
 .git
 .gitignore
 
-# Maven Wrapper
-.mvn/
-mvnw
-mvnw.cmd
-
 # IDE directories and project files
 .idea/
 .vscode/
@@ -26,7 +21,13 @@ mvnw.cmd
 
 # Docker and Compose artifacts
 compose.yaml
-dockerrun.txt
 
 # Miscellaneous
 backup
+
+target/
+.git/
+.idea/
+*.iml
+*.log
+*.swp
