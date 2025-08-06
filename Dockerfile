@@ -1,34 +1,14 @@
 # Builder
 FROM maven:3.9.6-eclipse-temurin-21 AS builder
 WORKDIR /app
-COPY .mvn .mvn
-COPY mvnw .
-COPY pom.xml .
+COPY pom.xml ./
+RUN mvn dependency:go-offline -B
 COPY src ./src
-
-RUN ./mvnw clean package -DskipTests
+RUN mvn clean package -DskipTests -B
 
 # Runtime
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
-
-# Accept build-time arguments
-ARG SPRING_DATASOURCE_URL
-ARG SPRING_DATASOURCE_USERNAME
-ARG SPRING_DATASOURCE_PASSWORD
-ARG DB
-ARG DB_PASSWORD
-ARG APP
-ARG APP_PASSWORD
-
-# Export them as ENV variables
-ENV SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
-ENV SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
-ENV SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
-ENV DB=${DB}
-ENV DB_PASSWORD=${DB_PASSWORD}
-ENV APP=${APP}
-ENV APP_PASSWORD=${APP_PASSWORD}
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
