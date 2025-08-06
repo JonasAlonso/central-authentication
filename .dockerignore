@@ -1,33 +1,27 @@
-# Maven build output
-target/
+## Build output
 **/target/
 
-# Git repositories
+## Git
 .git
 .gitignore
 
-# IDE directories and project files
+## IDE directories and project files
 .idea/
 .vscode/
 *.iml
 *.ipr
 *.iws
 
-# Environment files
+## Environment files
 .env
 .env-dev
 .env.prod
 .env-test
 
-# Docker and Compose artifacts
+## Docker artifacts
 compose.yaml
 
-# Miscellaneous
+## Miscellaneous
 backup
-
-target/
-.git/
-.idea/
-*.iml
 *.log
 *.swp
